@@ -237,6 +237,15 @@ class GameScene extends Phaser.Scene {
         this.footstepTimer = 0;
         this.buzzTimer = 0;
         this.currentLevel = 1;
+
+        // Touch input state
+        this.touchInput = {
+            up: false,
+            down: false,
+            left: false,
+            right: false,
+            collect: false
+        };
     }
 
     // Level configurations
@@ -1293,6 +1302,65 @@ class GameScene extends Phaser.Scene {
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
 
+        // Mobile Touch Controls
+        const addTouchListener = (id, key) => {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+
+            const setPressed = (pressed) => {
+                this.touchInput[key] = pressed;
+                if (pressed) btn.classList.add('active');
+                else btn.classList.remove('active');
+            };
+
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); setPressed(true); });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); setPressed(false); });
+            btn.addEventListener('mousedown', (e) => { setPressed(true); });
+            btn.addEventListener('mouseup', (e) => { setPressed(false); });
+            btn.addEventListener('mouseleave', (e) => { setPressed(false); });
+        };
+
+        addTouchListener('btn-up', 'up');
+        addTouchListener('btn-down', 'down');
+        addTouchListener('btn-left', 'left');
+        addTouchListener('btn-right', 'right');
+
+        // Action buttons
+        const collectBtn = document.getElementById('btn-collect');
+        if (collectBtn) {
+            collectBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.collectVegetable();
+                collectBtn.classList.add('active');
+            });
+            collectBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                collectBtn.classList.remove('active');
+            });
+            collectBtn.addEventListener('mousedown', () => {
+                this.collectVegetable();
+                collectBtn.classList.add('active');
+            });
+            collectBtn.addEventListener('mouseup', () => collectBtn.classList.remove('active'));
+        }
+
+        const restartBtn = document.getElementById('btn-restart');
+        if (restartBtn) {
+            const restartAction = (e) => {
+                e.preventDefault();
+                if (this.isGameOver) {
+                    this.currentLevel = 1;
+                    this.scene.restart({ level: 1, score: 0 });
+                } else {
+                    // Maybe confirm restart? For now just restart level
+                    this.scene.restart({ level: this.currentLevel, score: this.score });
+                }
+            };
+            restartBtn.addEventListener('touchstart', restartAction);
+            restartBtn.addEventListener('click', restartAction);
+        }
+
+
         this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E).on('down', () => this.collectVegetable());
         this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE).on('down', () => this.collectVegetable());
     }
@@ -1372,21 +1440,21 @@ class GameScene extends Phaser.Scene {
         let moving = false;
         let direction = this.player.lastDirection;
 
-        if (this.cursors.left.isDown || this.wasd.left.isDown) {
+        if (this.cursors.left.isDown || this.wasd.left.isDown || this.touchInput.left) {
             body.setVelocityX(-PLAYER_SPEED);
             direction = 'left';
             moving = true;
-        } else if (this.cursors.right.isDown || this.wasd.right.isDown) {
+        } else if (this.cursors.right.isDown || this.wasd.right.isDown || this.touchInput.right) {
             body.setVelocityX(PLAYER_SPEED);
             direction = 'right';
             moving = true;
         }
 
-        if (this.cursors.up.isDown || this.wasd.up.isDown) {
+        if (this.cursors.up.isDown || this.wasd.up.isDown || this.touchInput.up) {
             body.setVelocityY(-PLAYER_SPEED);
             direction = 'up';
             moving = true;
-        } else if (this.cursors.down.isDown || this.wasd.down.isDown) {
+        } else if (this.cursors.down.isDown || this.wasd.down.isDown || this.touchInput.down) {
             body.setVelocityY(PLAYER_SPEED);
             direction = 'down';
             moving = true;

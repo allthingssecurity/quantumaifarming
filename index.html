@@ -308,11 +308,131 @@
             #hud-panel {
                 order: -1;
                 min-width: 320px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            #hud-panel .panel-title,
+            #hud-panel .panel-level,
+            #hud-panel .controls,
+            #concept-panel {
+                grid-column: 1 / -1;
             }
 
             .game-title {
                 font-size: 1.3rem;
             }
+        }
+
+        /* Mobile Controls */
+        #mobile-controls {
+            display: none;
+            /* Hidden by default on desktop */
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            padding: 0 20px;
+            justify-content: space-between;
+            align-items: flex-end;
+            z-index: 1000;
+            pointer-events: none;
+            /* Let touches pass through container */
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            #mobile-controls {
+                display: flex;
+            }
+
+            /* Hide decorative particles on mobile to save performance */
+            .particle {
+                display: none;
+            }
+        }
+
+        .dpad {
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dpad-row {
+            display: flex;
+            gap: 5px;
+        }
+
+        .dpad-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            border-radius: 10px;
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .dpad-btn:active,
+        .dpad-btn.active {
+            background: rgba(0, 212, 255, 0.5);
+            transform: scale(0.95);
+        }
+
+        .dpad-center {
+            width: 50px;
+            height: 50px;
+        }
+
+        .action-buttons {
+            pointer-events: auto;
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .action-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .action-btn.restart {
+            border-color: rgba(255, 68, 68, 0.5);
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            width: 40px;
+            height: 40px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 215, 0, 0.4);
+        }
+
+        .action-btn.restart:active {
+            background: rgba(255, 68, 68, 0.4);
         }
     </style>
 </head>
@@ -380,6 +500,27 @@
 
         <!-- Game Canvas -->
         <div id="game-container"></div>
+    </div>
+
+    <!-- Mobile Controls Overlay -->
+    <div id="mobile-controls">
+        <div class="dpad">
+            <div class="dpad-row">
+                <button class="dpad-btn up" id="btn-up">▲</button>
+            </div>
+            <div class="dpad-row">
+                <button class="dpad-btn left" id="btn-left">◀</button>
+                <div class="dpad-center"></div>
+                <button class="dpad-btn right" id="btn-right">▶</button>
+            </div>
+            <div class="dpad-row">
+                <button class="dpad-btn down" id="btn-down">▼</button>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <button class="action-btn restart" id="btn-restart">R</button>
+            <button class="action-btn collect" id="btn-collect">E</button>
+        </div>
     </div>
 
     <div class="game-footer">
