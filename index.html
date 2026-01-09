@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚛️ Quantum & AI Farmer | AIQNEX</title>
+    <meta name="description" content="Learn Quantum Computing and AI concepts while farming! Powered by AIQNEX.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Fredoka+One&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 50%, #0a1628 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', 'Segoe UI', sans-serif;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .game-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .header-logo {
+            width: 60px;
+            height: auto;
+        }
+
+        .game-title {
+            color: #00d4ff;
+            font-size: 1.8rem;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            letter-spacing: 3px;
+        }
+
+        .game-subtitle {
+            color: #888;
+            font-size: 0.75rem;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .game-area {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        /* HUD Panel - Left Side */
+        #hud-panel {
+            background: linear-gradient(180deg, #1a2a4a 0%, #0a1628 100%);
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #00d4ff;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            color: white;
+            font-family: 'Orbitron', Arial, sans-serif;
+            min-width: 200px;
+        }
+
+        #hud-panel .panel-title {
+            color: #00d4ff;
+            font-size: 12px;
+            text-align: center;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        #hud-panel .panel-level {
+            color: #88ff88;
+            font-size: 10px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        #hud-panel .stat-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        #hud-panel .stat-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        #hud-panel .stat-label {
+            color: #888;
+            font-size: 9px;
+            width: 60px;
+            text-transform: uppercase;
+        }
+
+        #hud-panel .stat-value {
+            flex: 1;
+        }
+
+        #hud-panel .hearts {
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        #hud-panel .health-bar-bg {
+            background: #1a1a3a;
+            height: 14px;
+            border-radius: 7px;
+            overflow: hidden;
+            border: 1px solid #00d4ff;
+        }
+
+        #hud-panel .health-bar {
+            height: 100%;
+            background: linear-gradient(to right, #00ff88, #00d4ff);
+            transition: width 0.3s, background 0.3s;
+            border-radius: 7px;
+        }
+
+        #hud-panel .health-bar.low {
+            background: linear-gradient(to right, #ff4444, #ff8888);
+        }
+
+        #hud-panel .health-bar.medium {
+            background: linear-gradient(to right, #ffaa00, #ffcc44);
+        }
+
+        #hud-panel .health-bar.infected {
+            background: linear-gradient(to right, #00ff00, #88ff88);
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        #hud-panel .health-text {
+            font-size: 9px;
+            color: #00d4ff;
+            text-align: center;
+            margin-top: 3px;
+        }
+
+        #hud-panel .status {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        #hud-panel .status.healthy {
+            color: #00ff88;
+        }
+
+        #hud-panel .status.infected {
+            color: #00ff00;
+            background: rgba(0, 255, 0, 0.2);
+            animation: pulse 0.5s infinite;
+        }
+
+        #hud-panel .score {
+            color: #ffd700;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #hud-panel .veggies {
+            color: #00d4ff;
+            font-size: 12px;
+        }
+
+        #hud-panel .controls {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0, 212, 255, 0.3);
+            font-size: 9px;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Concept Panel */
+        #concept-panel {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        #concept-panel.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #concept-panel #concept-title {
+            color: #ffd700;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        #concept-panel #concept-desc {
+            color: #aaa;
+            font-size: 9px;
+            line-height: 1.4;
+        }
+
+        /* Game Container */
+        #game-container {
+            border: 3px solid #00d4ff;
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .game-footer {
+            margin-top: 15px;
+            color: #666;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+
+        .game-footer a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            font-size: 1.5rem;
+            opacity: 0.2;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .p1 {
+            top: 10%;
+            left: 3%;
+            animation-delay: 0s;
+        }
+
+        .p2 {
+            top: 25%;
+            right: 5%;
+            animation-delay: 1s;
+        }
+
+        .p3 {
+            bottom: 20%;
+            left: 5%;
+            animation-delay: 2s;
+        }
+
+        .p4 {
+            bottom: 30%;
+            right: 3%;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.2;
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(10deg);
+                opacity: 0.4;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .game-area {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #hud-panel {
+                order: -1;
+                min-width: 320px;
+            }
+
+            .game-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating particles -->
+    <div class="particle p1">⚛️</div>
+    <div class="particle p2">🤖</div>
+    <div class="particle p3">💡</div>
+    <div class="particle p4">🔮</div>
+
+    <div class="game-header">
+        <img src="aiqnex_logo.png" alt="AIQNEX" class="header-logo">
+        <h1 class="game-title">QUANTUM & AI FARMER</h1>
+    </div>
+    <p class="game-subtitle">Learn Quantum Computing & AI while farming! | Future Starts Here</p>
+
+    <div class="game-area">
+        <!-- HUD Panel -->
+        <div id="hud-panel">
+            <div class="panel-title">⚛️ QUANTUM STATS ⚛️</div>
+            <div class="panel-level" id="hud-level">Level 1: Green Meadow</div>
+
+            <div class="stat-row">
+                <span class="stat-label">Lives:</span>
+                <span class="stat-value hearts" id="hud-lives">❤️❤️❤️❤️❤️</span>
+            </div>
+
+            <div class="stat-row">
+                <span class="stat-label">Health:</span>
+                <div class="stat-value">
+                    <div class="health-bar-bg">
+                        <div class="health-bar" id="hud-health-bar" style="width: 100%"></div>
+                    </div>
+                    <div class="health-text" id="hud-health-text">100%</div>
+                </div>
+            </div>
+
+            <div class="stat-row">
+                <span class="stat-label">Status:</span>
+                <span class="stat-value status healthy" id="hud-status">✓ Coherent</span>
+            </div>
+
+            <div class="stat-row">
+                <span class="stat-label">Score:</span>
+                <span class="stat-value score" id="hud-score">0</span>
+            </div>
+
+            <div class="stat-row">
+                <span class="stat-label">Data:</span>
+                <span class="stat-value veggies" id="hud-veggies">⚛️ 0/15</span>
+            </div>
+
+            <!-- Concept Display Panel -->
+            <div id="concept-panel">
+                <div id="concept-title">🔮 Superposition</div>
+                <div id="concept-desc">Collect items to learn quantum concepts!</div>
+            </div>
+
+            <div class="controls">
+                <strong>WASD</strong>: Move | <strong>E/Space</strong>: Collect<br>
+                ⚠️ Avoid decoherence bugs! 🐛
+            </div>
+        </div>
+
+        <!-- Game Canvas -->
+        <div id="game-container"></div>
+    </div>
+
+    <div class="game-footer">
+        <p>Powered by <a href="#">AIQNEX</a> | Future Starts Here</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>
